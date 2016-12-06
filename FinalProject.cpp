@@ -14,13 +14,12 @@
 #include <time.h>
 #include <stdio.h>
 #include <fstream>
-//#include <malloc.h>
 using namespace std;
 
 
 class Cards{
 	protected:
-		string suit; //what type should this begin
+		string suit;
 		string face;
 		int value;
 		
@@ -51,7 +50,7 @@ void Cards::initializeDeck()//intializes all 52 cards
 	for ( i = 0; i < 13; i++)
 	{
 			
-			(this +i)->suit = "H";//♥"; heart \u26665
+			(this +i)->suit = "H";//heart
 			(this +i)->face = faceVals[i];
 			(this +i)->value = vals[i];
 			(this + i)->dealt = 0;
@@ -59,21 +58,21 @@ void Cards::initializeDeck()//intializes all 52 cards
 	for ( i = 13; i < 26; i++)
 	{
 			
-			(this +i)->suit = "D";//"♦";diamond \u2666
+			(this +i)->suit = "D";//diamond
 			(this +i)->face = faceVals[i - 13];
 			(this +i)->value = vals[i-13];
 			(this + i)->dealt = 0;
 	}
 	for ( i = 26; i < 39; i++)
 	{
-			(this +i)->suit =  "C";//"♣";//clubs \u2663
+			(this +i)->suit =  "C";//club
 			(this +i)->face = faceVals[i-26];
 			(this +i)->value = vals[i-26];
 			(this + i)->dealt = 0;
 	}
 	for ( i = 39; i < 52; i++)
 		{
-			(this +i)->suit = "S";//"♠";spade \u2660
+			(this +i)->suit = "S";//spade
 			(this +i)->face = faceVals[i-39];
 			(this +i)->value = vals[i-39];
 			(this + i)->dealt = 0;
@@ -84,7 +83,6 @@ void Cards::initializeDeck()//intializes all 52 cards
 
 void Cards:: display ()
 {
-		//cout << "___" << endl;
 		cout << "[" << face << " " ;
 		cout << suit << "]" ;
 }
@@ -190,7 +188,6 @@ void Hands :: display()
 		
 	}
 	cout << endl;
-	//cout << "\tthe sum of the value of the cards is "<< sum << endl;
 }
 int Hands :: handleAce()
 {
@@ -230,7 +227,6 @@ class Player{
 		string name;
 		
 	public:
-		//virtual void playGame ();
 		Player();
 		Player(Hands hand1, double num, string n);
 		void displayPlayer();
@@ -250,15 +246,13 @@ Player :: Player (Hands hand1, double num, string n)
 {
 	
 	name = n;
-	//cout <<"player constructor"<< endl;
 	playHand = hand1;
 	bank = num;
 	
 }
 void Player :: displayPlayer()//shows the player stats and their hand
 {
-	cout <<"\t" <<name << " has $" << bank << " remaining in the bank" << endl
-	<<"\t"<< name << "'s hand: " << endl<<"\t";
+	cout <<"\t"<< name << "'s hand: " << endl<<"\t";
 	
 	playHand.display();
 }
@@ -296,9 +290,7 @@ Dealer :: Dealer ()
 	cout << "opps you messed up the dealer"<< endl;
 }
 Dealer::Dealer(Hands hand1) : Player(hand1, 0, "")//calls the player constructor to create the dealer as a player with no bank
-{
-	//cout <<"dealer constructor"<< endl;
-	
+{	
 }
 void Dealer :: displayDealer()
 {
@@ -358,7 +350,6 @@ double findName (string name)
 			content = content.substr(0, pos);
 		}
 		bank = atoi(bankStr.c_str());
-		//do we want it to be case sensitive?? right now it is.  if no implement tolower()function
 		if(name == content)
 		{
 			fp.close();
@@ -384,8 +375,6 @@ int checkDup (string username)
 			bankStr = content.substr(pos + 1);
 			content = content.substr(0, pos);
 		}
-		
-		//do we want it to be case sensitive?? right now it is.  if no implement tolower()function
 		if(username == content)
 		{
 			fp.close();
@@ -394,7 +383,6 @@ int checkDup (string username)
     }
 	fp.close();
 	return 0;
-	//make this catch throw error checking as well
 }
 
 void printFile ()
@@ -453,9 +441,7 @@ void updateFile (string username, double bank)
 		bank1 = atoi(bankStr.c_str());//out the string bank into an integer
 			
 		users.push_back(content);
-		banks.push_back(bank1);	
-		//cout << users[i] << endl;
-		//cout << banks[i] << endl;		
+		banks.push_back(bank1);		
 		i++;
     }
 	fp.close();
@@ -468,7 +454,7 @@ void updateFile (string username, double bank)
 			//break;//break because we only save one player at a time so we can stop looking
 		}
 		
-		if (banks[i] == 0)//|| users[i] == "")
+		if (banks[i] == 0)
 		{
 			users.erase (users.begin()+i);//this also takes care of any blank lines that might occur on accident 
 			banks.erase (banks.begin()+i);
@@ -499,11 +485,17 @@ void handleBets (Dealer dealer, Player player1, int bet)
 	//----------dealer-----------------
 	Hands handD = *(dealer.gethand());
 	int sumD = handD.getSum();
+	if(sumD == -1)
+		cout << "Dealer's sum: 21" << endl;
+	else
+		cout << "Dealer's sum: " << sumD << endl;
+	if(sum != -1)
+		cout << player1.getName() << "'s sum: " << sum << endl;
 	
-	cout << player1.getName() << "'s sum: " << sum << endl;
-	if (sum > 21 && sumD > 21)//Dealer and Player Bust
+	if(sum > 21)//Player bust
 	{
-		cout << player1.getName() << ", you and the dealer both bust. You keep your bet, your bank now has $" << bank << endl;	
+		bank = bank - bet;
+		cout << "Sorry " << player1.getName() << ", you busted. Your bank now has $" << bank << endl;
 	}
 	else if (sum == sumD)//Dealer and Player Push
 	{
@@ -511,13 +503,9 @@ void handleBets (Dealer dealer, Player player1, int bet)
 	}
 	else if (sum == -1)
 	{
+		cout << player1.getName() << "'s sum: 21" << endl;
 		bank = bank + (int)((bet * 1.5) + .5);
 		cout << player1.getName() << ", you got Blackjack! Blackjack pays out 3 to 2. Your bank now has $" << bank << endl;
-	}
-	else if(sum > 21)//Player bust
-	{
-		bank = bank - bet;
-		cout << "Sorry " << player1.getName() << ", you busted. Your bank now has $" << bank << endl;
 	}
 	else if(sumD > 21)//Dealer bust
 	{
@@ -553,7 +541,7 @@ int main (void)
 	int fileStatus = 0;
 	string content;
 	double x;
-	//string userInfo = "-1";
+
 	ifstream fp ("saveFile.txt");
 	//this determines the menu -- if there are saved players then a menu with option to loaad displays and vice versa
 	if (fp.fail()) //makes sure the file opens -- if it doesn't then it creates a file
@@ -578,26 +566,25 @@ int main (void)
 	
 	if (fileStatus == 0)//no saved games
 	{
-		cout<< "Enter number of players: (Maximum:4, Minimum: 1)" << endl;
+		cout<< "Enter number of players: (Maximum:4, Minimum: 1)" << endl << ">>";
 		cin>> content;
 		numPlayers = errorCheck (content);
 			while (numPlayers < 1 || numPlayers > 4)
 			{
-				cout<< "Invalid input.  Please enter either 1, 2, 3, or 4"<< endl;
+				cout<< "Invalid input.  Please enter either 1, 2, 3, or 4" << endl << ">>";
 				cin >> content;
 				numPlayers = errorCheck (content);
-				//need a way to error check if a non integer is entered how to make sure it the program doesn't blow up
 			}
 			
 		for (int i = 0; i < numPlayers; i ++)
 		{
 			Hands tempHand (deck);
-			cout <<"Enter username for player "<<i+1<<":";
+			cout <<"Enter username for player "<<i+1<< endl<<Eric ">>";
 			cin >>username;
 			int num = checkDup (username);
 			while(num == -1)
 			{
-				cout<<"Username already exists.  Please enter a new name:"<<endl;
+				cout<<"Username already exists.  Please enter a new name:" << endl << ">>";
 				cin >>username;
 				num = checkDup (username);
 			}
@@ -609,24 +596,24 @@ int main (void)
 	else//there are saved users
 	{
 		
-		cout<< "Enter number of players: (Maximum:4, Minimum: 1)" << endl;
+		cout<< "Enter number of players: (Maximum:4, Minimum: 1)" << endl << ">>";
 		cin>> content;
 		numPlayers = errorCheck (content);
 				while (numPlayers < 1 || numPlayers > 4)
 				{
-					cout<< "Invalid input.  Please enter either 1, 2, 3, or 4"<< endl;
+					cout<< "Invalid input.  Please enter either 1, 2, 3, or 4"<< endl << ">>";
 					cin>> content;
 					numPlayers = errorCheck (content);
 				}
 	for (int i = 0; i < numPlayers; i++)
 	{
 		
-		cout<< "1: Create New Player" << endl << "2: Load Saved Player"<< endl;
+		cout<< "1: Create New Player" << endl << "2: Load Saved Player"<< endl << ">>";
 		cin>> content;
 		selection = errorCheck (content);
 		while (selection < 1 || selection > 2)
 				{
-					cout<< "Invalid input.  Please enter either 1 or 2"<< endl;
+					cout<< "Invalid input.  Please enter either 1 or 2"<< endl << ">>";
 					cin>> content;
 					selection = errorCheck (content);
 				}
@@ -635,12 +622,12 @@ int main (void)
 			
 			
 				Hands tempHand (deck);
-				cout <<"Enter username for player "<<i+1<<":";
+				cout <<"Enter username for player "<<i+1 << endl << ">>";
 				cin >>username;
 				int num = checkDup (username);
 				while(num == -1)
 				{
-					cout<<"Username already exists.  Please enter a new name:"<<endl;
+					cout<<"Username already exists.  Please enter a new name"<<endl << ">>";
 					cin >>username;
 					num = checkDup (username);
 				}
@@ -655,41 +642,38 @@ int main (void)
 		{
 			while (selection == 2)
 			{
-				cout<< "1. Enter a username" << endl << "2. See directory of users" << endl<<"3. Create a new player" << endl;
+				cout<< "1. Enter a username" << endl << "2. See directory of users" << endl<<"3. Create a new player" << endl << ">>";
 				cin >> content;
 				selection = errorCheck(content);
 					while (selection < 1 || selection > 3)
 					{
-						cout<< "invalid input. Please try again.\n"<< "1. Enter a username" << endl << "2. See directory of users" << endl<<"3. Start new game" << endl;
+						cout<< "invalid input. Please try again.\n"<< "1. Enter a username" << endl << "2. See directory of users" << endl<<"3. Start new game" << endl << ">>";
 						cin >> content;
 						selection = errorCheck(content);
 					}
 					if (selection == 1)//entering a username to start the game from
 					{
 						
-						cout << "Enter username for player" <<i+1<<":";
+						cout << "Enter username for player" << i+1 << endl << ">>";
 						cin >>username;
-						cout<< "Entered username"<< endl;
 						double tempBank = findName(username);
-						//cout << "made it back->" << tempBank<< endl;
 						while(tempBank == -1 )//this happens if the name was not found
 						{
 							int selection1;
-							cout<< "1. Enter new username 2. See directory ";//give the user the option to see all usernames 
+							cout << "1. Enter new username 2. See directory " << endl << ">>";//give the user the option to see all usernames 
 							cin >> content;
 							selection1 = errorCheck(content);
 							while (selection1 < 1 || selection1 > 2)
 							{
-								cout<< "Invalid input.  Please enter 1 or 2:"<< endl;
+								cout<< "Invalid input.  Please enter 1 or 2"<< endl << ">>";
 								cin >> content;
 								selection1 = errorCheck(content);
 							}
 							if (selection1 == 1)
 							{
-								cout << "Enter username:";
+								cout << "Enter username" << endl << ">>";
 								cin >> username;
-								tempBank = findName(username);//WHY WONT THEY FIND THE NAME THIS TIME WHAT IS DIFFERENT!?!?
-								cout << tempBank<<endl;
+								tempBank = findName(username);
 							}
 							else 
 								printFile();							
@@ -706,12 +690,12 @@ int main (void)
 					else if (selection == 3)//starting a brand new game--same as above
 					{
 						Hands tempHand (deck);
-						cout <<"Enter username for player "<<i+1<<":";
+						cout <<"Enter username for player "<<i+1<< endl << ">>";
 						cin >>username;
 						int num = checkDup (username);
 						while(num == -1)
 						{
-							cout<<"Username already exists.  Please enter a new name:"<<endl;
+							cout<<"Username already exists.  Please enter a new name"<<endl<< ">>";
 							cin >>username;
 							num = checkDup (username);
 						}
@@ -734,19 +718,18 @@ Dealer dealer(handD);
 int bets [numPlayers];
 int play = 1;
 int betTemp;
-//while (1)
 {	
 	for(j = 0; j < numPlayers; j++)
 	{
 		cout<< table[j].getName()<< " it is your turn.  You have $"<<table[j].getBank()<<". How much would you like to bet?"<< endl<< ">>";
 		cin>> content;
 		bets[j] = errorCheck (content);
-		while (bets[j] == 0 || bets[j] > table[j].getBank())
+		while (bets[j] <= 0 || bets[j] > table[j].getBank())
 		{
-			if (bets[j] == 0 )
-				cout<< "You cannot bet $0.  Enter a new value."<< endl;
+			if (bets[j] <= 0 )
+				cout<< "Your bet has to be greater than 0.  Enter a new value."<< endl << ">>";
 			else
-			cout<< "You cannot bet more than your bank($"<<table[j].getBank()<<").  Enter a new value."<< endl;
+			cout<< "You cannot bet more than your bank($"<<table[j].getBank()<<").  Enter a new value."<< endl << ">>";
 			
 			cin>> content;
 			bets[j] = errorCheck (content);
@@ -777,7 +760,7 @@ int betTemp;
 			playSelect = errorCheck(content);
 			while (playSelect != 1 && playSelect!= 2)
 			{
-				cout<< "Incorrect input: Please select (1) to hit or (2) to stay: ";
+				cout<< "Incorrect input: Please select (1) to hit or (2) to stay" << endl << ">>";
 				cin >> content;
 				playSelect = errorCheck(content);
 			}
@@ -793,8 +776,6 @@ int betTemp;
 			}
 		}
 	}
-
-	//dealer plays after everyone else correct??
 	int dealerCount = 0;
 	
 	while (dealerCount == 0)//the dealer keeps playing until the get to 17
@@ -804,36 +785,12 @@ int betTemp;
 	Hands hand = *(dealer.gethand());
 	cout << "Dealers hand after playing: ";
 	hand.display();
-	cout << "Dealer's sum: " << dealer.gethand()->getSum() << endl;
 	sum = hand.getSum();
 	for (j = 0; j < numPlayers; j++)//handle the bets of all of the players
 	{
 		handleBets(dealer, table[j], bets[j]);
-		/*cout <<table[j].getName()<< " would you like to play again? Yes(1) or No(2)"<< endl<< ">>";
-		cin >> play;
-			if (play ==  2)
-			{
-				numPlayers--;
-				table.erase (table.begin()+j);
-				
-				if (numPlayers == 0)
-				{
-					free(bets);
-					return 0;
-				}
-			}*/
 	}
-	
-	/*for (j = 0; j < numPlayers; j++)
-	{
-		handleBets(dealer, table[j], bets[j]);
-	}*/
-
-
-
 }
-//free(bets);
-
 return 0;
 }
 
