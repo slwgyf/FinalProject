@@ -191,13 +191,13 @@ void Hands :: display()
 }
 int Hands :: handleAce()
 {
-	for(int i = 0; i < hand.size(); i++)
+	for(int i = 0; i < hand.size(); i++)//goes through all the cards in the hand
 	{
-		if(hand[i].getValue() == 11)
+		if(hand[i].getValue() == 11)//if it is an ace
 		{
-			setSum(sum - 10);
-			hand[i].setValue(1);
-			return sum;
+			setSum(sum - 10);//makes the ace value worth 1
+			hand[i].setValue(1);//resets the value
+			return sum;//retuns new sum
 		}
 	}
 	return sum;
@@ -343,7 +343,7 @@ double findName (string name)
 	while(! fp.eof())
     {
 		getline(fp,content);
-		string::size_type pos =content.find(' ');
+		string::size_type pos =content.find(' ');//space is delim character
 		if(content.npos != pos) 
 		{
 			bankStr = content.substr(pos + 1);
@@ -353,7 +353,7 @@ double findName (string name)
 		if(name == content)
 		{
 			fp.close();
-			return bank;
+			return bank;//returns the bank of the username entered
 		}
     }
 	bank = -1;
@@ -365,20 +365,20 @@ double findName (string name)
 int checkDup (string username)
 {
 	string content, bankStr;
-	ifstream fp ("saveFile.txt");
-	while(! fp.eof())
+	ifstream fp ("saveFile.txt");//opens file for reading
+	while(! fp.eof())//loops through whole file
     {
-		getline(fp,content);
-		string::size_type pos =content.find(' ');
+		getline(fp,content);//gets whole line
+		string::size_type pos =content.find(' ');//uses space as delimiter
 		if(content.npos != pos) 
 		{
-			bankStr = content.substr(pos + 1);
+			bankStr = content.substr(pos + 1);//separates the bank from the name
 			content = content.substr(0, pos);
 		}
-		if(username == content)
+		if(username == content)//checks to see if the user name matches any of the names in the file
 		{
 			fp.close();
-			return -1;
+			return -1;//meaning that name already exists
 		}
     }
 	fp.close();
@@ -387,20 +387,20 @@ int checkDup (string username)
 
 void printFile ()
 {
-	ifstream fp ("saveFile.txt");
+	ifstream fp ("saveFile.txt");//opens the file for reading
 	string content, bankStr;
 	int bank;
-	while(! fp.eof())
+	while(! fp.eof())//loop goes through the entire file
     {
 		getline(fp,content);
-		string::size_type pos =content.find(' ');
+		string::size_type pos =content.find(' ');//use space as delimiter
 		if(content.npos != pos) 
 		{
-			bankStr = content.substr(pos + 1);
+			bankStr = content.substr(pos + 1);//separates the bank from the name
 			content = content.substr(0, pos);
 		}
-		bank = atoi(bankStr.c_str());
-		cout <<"Username:"<<content<< "| Bank:"<<bank<< endl;
+		bank = atoi(bankStr.c_str());//converts the string to int
+		cout <<"Username:"<<content<< "| Bank:"<<bank<< endl;//displays it
     }
 	cout << endl;
 	fp.close();
@@ -451,7 +451,6 @@ void updateFile (string username, double bank)
 		if (username == users[i])
 		{
 			banks[i] = bank;
-			//break;//break because we only save one player at a time so we can stop looking
 		}
 		
 		if (banks[i] == 0)
@@ -579,7 +578,7 @@ int main (void)
 		for (int i = 0; i < numPlayers; i ++)
 		{
 			Hands tempHand (deck);
-			cout <<"Enter username for player "<<i+1<< endl<<Eric ">>";
+			cout <<"Enter username for player "<<i+1<< endl<< ">>";
 			cin >>username;
 			int num = checkDup (username);
 			while(num == -1)
@@ -794,9 +793,6 @@ int betTemp;
 return 0;
 }
 
-//Ace needs to be handled->11 or 1
-//if dealer and player busts what happens*DONE*
-//I dont want to do play multipe games-- its a pain in the ass
-//a shit ton of error checking
+
 
 
