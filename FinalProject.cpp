@@ -229,7 +229,7 @@ class Player{
 	public:
 		Player();
 		Player(Hands hand1, double num, string n);
-		void displayPlayer();
+		virtual void displayPlayer();
 		Hands* gethand();
 		void hit(Cards *deck);
 		string getName();
@@ -280,7 +280,7 @@ class Dealer : public Player//dealer is a player initialized with 0
 {
 	public:
 		int playGame(Cards *deck);
-		void displayDealer();
+		void displayPlayer();
 		Dealer(Hands hand1);
 		Dealer ();
 		
@@ -292,7 +292,7 @@ Dealer :: Dealer ()
 Dealer::Dealer(Hands hand1) : Player(hand1, 0, "")//calls the player constructor to create the dealer as a player with no bank
 {	
 }
-void Dealer :: displayDealer()
+void Dealer :: displayPlayer()
 {
 	vector <Cards> tempH = playHand.getHand();//displays the dealers hand- the first card is face down, the second is face up
 	cout << "Dealers Hand" << endl;
@@ -367,7 +367,6 @@ int checkDup (string username, vector <Player> table)
 	string content, bankStr;
 	ifstream fp ("saveFile.txt");//opens file for reading
 
-	cout<< "in check"<<endl;
 	while(! fp.eof())//loops through whole file
     {
 		getline(fp,content);//gets whole line
@@ -385,11 +384,9 @@ int checkDup (string username, vector <Player> table)
 		}
     }
 	
-	cout<<table.size()<< endl;
 	
 	for (int i = 0; i < table.size(); i++)
 	{
-		cout<<table[i].getName()<< endl;
 				
 		if (username == table[i].getName())
 		{
@@ -404,9 +401,7 @@ int checkDup (string username, vector <Player> table)
 int checkInGame (string username, vector <Player> table)
 {
 	for (int i = 0; i < table.size(); i++)
-	{
-		cout<<table[i].getName()<< endl;
-				
+	{			
 		if (username == table[i].getName())
 		{
 			cout<< "Username already selected.";
@@ -531,11 +526,16 @@ void handleBets (Dealer dealer, Player player1, int bet)
 	{
 		cout << player1.getName() << ", you pushed. You keep your bet. Your bank now has $" << bank << endl;
 	}
-	else if (sum == -1)
+	else if (sum == -1)//player blackjack
 	{
 		cout << player1.getName() << "'s sum: 21" << endl;
 		bank = bank + (int)((bet * 1.5) + .5);
 		cout << player1.getName() << ", you got Blackjack! Blackjack pays out 3 to 2. Your bank now has $" << bank << endl;
+	}
+	else if (sumD == -1)//dealer blackjack
+	{
+		bank = bank - bet;
+		cout << "The Dealer got Blackjack. Sorry " << player1.getName() << "you lost, Your bank now has $" << bank << endl;
 	}
 	else if(sumD > 21)//Dealer bust
 	{
@@ -565,13 +565,15 @@ int errorCheck (string content)//makes sure the input is a string
 int main (void)
 {
 	string username;
-
+	int again =1;
 	int selection;
 	int numPlayers;
 	int fileStatus = 0;
 	string content;
 	double x;
-
+while (again ==1)
+{	
+	fileStatus = 0;
 	ifstream fp ("saveFile.txt");
 	//this determines the menu -- if there are saved players then a menu with option to loaad displays and vice versa
 	if (fp.fail()) //makes sure the file opens -- if it doesn't then it creates a file
@@ -608,6 +610,7 @@ int main (void)
 			
 		for (int i = 0; i < numPlayers; i ++)
 		{
+			int file = 0;
 			Hands tempHand (deck);
 			cout <<"Enter username for player "<<i+1<< endl<< ">>";
 			cin >>username;
@@ -618,9 +621,11 @@ int main (void)
 				cin >>username;
 				num = checkDup (username, table);
 			}
+			if ( i == 0)
+				file = 1;
 			Player tempPlayer (tempHand,500, username);
 			table.push_back(tempPlayer);
-			addName(tempPlayer,1);
+			addName(tempPlayer,file);
 		}
 	}
 	else//there are saved users
@@ -771,7 +776,7 @@ int betTemp;
 			cin>> content;
 			bets[j] = errorCheck (content);
 		}	
-		dealer.displayDealer();
+		dealer.displayPlayer();
 		table[j].displayPlayer();
 		
 		while (1)
@@ -827,6 +832,17 @@ int betTemp;
 	{
 		handleBets(dealer, table[j], bets[j]);
 	}
+}
+cout<<endl<<endl<<"Would you like to play again? yes(1) no(2)"<<endl<<">>";
+cin>> content;
+again = errorCheck(content);
+	while (again < 1 || again > 2)
+	{
+		cout<< "Invalid input.  Please enter 1 or 2"<< endl << ">>";
+		cin >> content;
+		again = errorCheck(content);
+	}
+	cout<<endl<<endl;
 }
 return 0;
 }
