@@ -362,10 +362,12 @@ double findName (string name)
 	return bank;
 }
 
-int checkDup (string username)
+int checkDup (string username, vector <Player> table)
 {
 	string content, bankStr;
 	ifstream fp ("saveFile.txt");//opens file for reading
+
+	cout<< "in check"<<endl;
 	while(! fp.eof())//loops through whole file
     {
 		getline(fp,content);//gets whole line
@@ -377,11 +379,40 @@ int checkDup (string username)
 		}
 		if(username == content)//checks to see if the user name matches any of the names in the file
 		{
+			cout<< "Username already exisits";
 			fp.close();
 			return -1;//meaning that name already exists
 		}
     }
+	
+	cout<<table.size()<< endl;
+	
+	for (int i = 0; i < table.size(); i++)
+	{
+		cout<<table[i].getName()<< endl;
+				
+		if (username == table[i].getName())
+		{
+			cout<< "Username already selected.";
+			fp.close();
+			return -1;//meaning that name already exists
+		}
+	}
 	fp.close();
+	return 0;
+}
+int checkInGame (string username, vector <Player> table)
+{
+	for (int i = 0; i < table.size(); i++)
+	{
+		cout<<table[i].getName()<< endl;
+				
+		if (username == table[i].getName())
+		{
+			cout<< "Username already selected.";
+			return -1;//meaning that name already exists
+		}
+	}
 	return 0;
 }
 
@@ -580,12 +611,12 @@ int main (void)
 			Hands tempHand (deck);
 			cout <<"Enter username for player "<<i+1<< endl<< ">>";
 			cin >>username;
-			int num = checkDup (username);
+			int num = checkDup (username, table);
 			while(num == -1)
 			{
-				cout<<"Username already exists.  Please enter a new name:" << endl << ">>";
+				cout<<".  Please enter a new name:" << endl << ">>";
 				cin >>username;
-				num = checkDup (username);
+				num = checkDup (username, table);
 			}
 			Player tempPlayer (tempHand,500, username);
 			table.push_back(tempPlayer);
@@ -623,12 +654,12 @@ int main (void)
 				Hands tempHand (deck);
 				cout <<"Enter username for player "<<i+1 << endl << ">>";
 				cin >>username;
-				int num = checkDup (username);
+				int num = checkDup (username,table);
 				while(num == -1)
 				{
-					cout<<"Username already exists.  Please enter a new name"<<endl << ">>";
+					cout<<".  Please enter a new name"<<endl << ">>";
 					cin >>username;
-					num = checkDup (username);
+					num = checkDup (username, table);
 				}
 				Player tempPlayer (tempHand,500, username);
 				table.push_back(tempPlayer);
@@ -655,6 +686,13 @@ int main (void)
 						
 						cout << "Enter username for player" << i+1 << endl << ">>";
 						cin >>username;
+						int num = checkInGame(username,table);//checks to see if that player has already been selected.
+						while(num == -1)
+						{
+							cout<<"  Please enter a new name"<<endl << ">>";
+							cin >>username;
+							num =checkInGame (username, table);
+						}
 						double tempBank = findName(username);
 						while(tempBank == -1 )//this happens if the name was not found
 						{
@@ -691,12 +729,12 @@ int main (void)
 						Hands tempHand (deck);
 						cout <<"Enter username for player "<<i+1<< endl << ">>";
 						cin >>username;
-						int num = checkDup (username);
+						int num = checkDup (username, table);
 						while(num == -1)
 						{
-							cout<<"Username already exists.  Please enter a new name"<<endl<< ">>";
+							cout<<".  Please enter a new name"<<endl<< ">>";
 							cin >>username;
-							num = checkDup (username);
+							num = checkDup (username,table);
 						}
 						Player tempPlayer (tempHand,500, username);
 						table.push_back(tempPlayer);
